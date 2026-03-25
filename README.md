@@ -71,3 +71,10 @@ The proposed system provides an automated workflow:
 | API | RESTful APIs |
 
 ---
+
+## SYSTEM ARCHITECTURE
+<img width="3936" height="2036" alt="image" src="https://github.com/user-attachments/assets/bbf90571-19b8-4bed-b8b0-f0d300edd198" />
+
+---
+## DATABASE
+<img width="2937" height="1746" alt="image" src="https://github.com/user-attachments/assets/b79a2d90-cf13-4bcc-b064-ccb5d86552ad" />
