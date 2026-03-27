@@ -1,5 +1,15 @@
 from sqlalchemy.orm import Session
-from . import models
+from . import models, schemas
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+def create_user(db: Session, user: schemas.UserCreate, hashed_password: str):
+    db_user = models.User(email=user.email, hashed_password=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 def create_purchase(db: Session, purchase):
     db_purchase = models.Purchase(**purchase.dict())
@@ -30,8 +40,15 @@ def add_purchase(db: Session, product):
         existing.quantity += product.quantity
         existing.cost_price = product.cost_price
     else:
-        new_product = models.Product(**product.dict())
+        new_product = models.Product(**product.model_dump() if hasattr(product, "model_dump") else product.dict())
         db.add(new_product)
+
+    db_purchase = models.Purchase(
+        product_name=product.name,
+        quantity=product.quantity,
+        total_cost=product.cost_price * product.quantity
+    )
+    db.add(db_purchase)
 
     db.commit()
     return {"message": "Purchase added"}
@@ -49,6 +66,13 @@ def add_sale(db: Session, sale):
     product.quantity -= sale.quantity
 
     profit = (product.selling_price - product.cost_price) * sale.quantity
+    
+    db_sale = models.Sale(
+        product_name=sale.product_name,
+        quantity=sale.quantity,
+        total_sale=sale.total_sale
+    )
+    db.add(db_sale)
 
     db.commit()
     return {"profit": profit}

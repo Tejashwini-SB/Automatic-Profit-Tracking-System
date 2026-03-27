@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from .. import schemas, crud, database
+from .. import schemas, crud, database, auth
 
-router = APIRouter()
+router = APIRouter(tags=['Purchase'])
 
 def get_db():
     db = database.SessionLocal()
@@ -12,5 +12,5 @@ def get_db():
         db.close()
 
 @router.post("/purchase")
-def add_purchase(product: schemas.ProductCreate, db: Session = Depends(get_db)):
+def add_purchase(product: schemas.ProductCreate, db: Session = Depends(get_db), current_user = Depends(auth.get_current_user)):
     return crud.add_purchase(db, product)

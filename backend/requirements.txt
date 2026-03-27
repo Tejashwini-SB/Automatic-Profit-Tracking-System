@@ -1,5 +1,9 @@
-fastapi
+fastapi[all]
 uvicorn
 sqlalchemy
 psycopg2-binary
 pydantic
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+openpyxl
