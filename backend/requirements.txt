@@ -1,9 +1,11 @@
 fastapi[all]
-uvicorn
+uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 pydantic
+bcrypt
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
 openpyxl
+python-dotenv
