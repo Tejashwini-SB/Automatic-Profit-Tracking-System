@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-// Dynamically construct the API URL. This fixes the issue when accessing the app via local IP instead of localhost.
-const API_URL = `http://${window.location.hostname}:8000`;
+// In production, REACT_APP_API_URL is set at build time (e.g. on Vercel) to the deployed backend URL.
+// In local development, it falls back to the same hostname on port 8000.
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  `http://${window.location.hostname}:8000`;
 
 const api = axios.create({
   baseURL: API_URL,
