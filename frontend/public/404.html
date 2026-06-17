@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Profit Tracker</title>
+    <script>
+      // GitHub Pages SPA routing fix.
+      // Saves the current URL to sessionStorage then redirects to the root.
+      // index.html then reads it back and restores the correct route via history.replaceState.
+      var l = window.location;
+      sessionStorage.redirect = l.href;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + 1).join('/') + '/?p=1'
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
