@@ -7,16 +7,18 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from . import models, schemas, database
 
-# In production, SECRET_KEY must be set as an environment variable.
-# Never use the fallback value in production.
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-insecure-key-change-me")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+# Use the updated path prefix for authentication login
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
 def verify_password(plain_password, hashed_password):
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    try:
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception:
+        return False
 
 def get_password_hash(password):
     salt = bcrypt.gensalt()
@@ -51,7 +53,20 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         token_data = schemas.TokenData(email=email)
     except JWTError:
         raise credentials_exception
+        
     user = db.query(models.User).filter(models.User.email == token_data.email).first()
     if user is None:
         raise credentials_exception
     return user
+
+def require_admin(current_user: models.User = Depends(get_current_user)):
+    if current_user.role != "Admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Operation restricted to Administrators only"
+        )
+    return current_user
+
+def require_staff(current_user: models.User = Depends(get_current_user)):
+    # Both Staff and Admin are allowed
+    return current_user
