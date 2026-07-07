@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// In production, REACT_APP_API_URL is set at build time (e.g. on Vercel) to the deployed backend URL.
-// In local development, it falls back to the same hostname on port 8000.
 const API_URL =
-  process.env.REACT_APP_API_URL ||
+  import.meta.env.VITE_API_URL ||
   `http://${window.location.hostname}:8000`;
 
 const api = axios.create({
